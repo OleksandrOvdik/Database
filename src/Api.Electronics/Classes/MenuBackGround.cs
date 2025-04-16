@@ -1,10 +1,11 @@
 ﻿using Models;
+using Models.Classes;
 
-namespace Electronics;
+namespace Electronics.Classes;
 
 public class MenuBackGround
 {
-    public static void AddingMenu(Device_Manager manager)
+    public static void AddingMenu(DeviceManager manager)
     {
         Console.WriteLine("\n=== ADDING ===");
         Console.WriteLine("1. Smartwatch");
@@ -13,20 +14,20 @@ public class MenuBackGround
         Console.WriteLine("0. Back");
         
         Console.Write("Your choice: ");
-        string choice = Console.ReadLine();
+        string? choice = Console.ReadLine();
         
         switch(choice)
         {
             case "1":
-                AddSW(manager);
+                AddSw(manager);
                 break;
                 
             case "2":
-                AddPC(manager);
+                AddPc(manager);
                 break;
                 
             case "3":
-                AddED(manager);
+                AddEd(manager);
                 break;
                 
             case "0":
@@ -37,19 +38,19 @@ public class MenuBackGround
                 break;
         }
     }
-    
-    
-    static void AddSW(Device_Manager manager)
+
+
+    private static void AddSw(DeviceManager manager)
     {
         try
         {
             Console.WriteLine("\n=== Adding Smartwatch ===");
             
             Console.Write($"Enter ID, (start with SW): ");
-            string id = Console.ReadLine();
+            string? id = Console.ReadLine();
             
             Console.Write("Enter name: ");
-            string name = Console.ReadLine();
+            string? name = Console.ReadLine();
             
             Console.Write("Enter battery percentage (0-100): ");
             int battery = int.Parse(Console.ReadLine());
@@ -63,22 +64,22 @@ public class MenuBackGround
         }
     }
     
-    static void AddPC(Device_Manager manager)
+    static void AddPc(DeviceManager manager)
     {
         try
         {
             Console.WriteLine("\n=== Adding Personal Computer ===");
             
             Console.Write("Enter ID (start with P): ");
-            string id = Console.ReadLine();
+            string? id = Console.ReadLine();
             
             Console.Write("Enter name: ");
-            string name = Console.ReadLine();
+            string? name = Console.ReadLine();
             
             Console.Write("Enter operating system (or empty string): ");
-            string os = Console.ReadLine();
+            string? os = Console.ReadLine();
             
-            Personal_Computer pc = new Personal_Computer(id, name, string.IsNullOrEmpty(os) ? null : os);
+            PersonalComputer pc = new PersonalComputer(id, name, string.IsNullOrEmpty(os) ? null : os);
             manager.AddShit(pc);
         }
         catch (Exception ex)
@@ -86,26 +87,26 @@ public class MenuBackGround
             Console.WriteLine($"KURBA ERRORE: {ex.Message}");
         }
     }
-    
-    static void AddED(Device_Manager manager)
+
+    private static void AddEd(DeviceManager manager)
     {
         try
         {
             Console.WriteLine("\n=== Adding Embedded Device ===");
             
             Console.Write("Enter ID (start with ED): ");
-            string id = Console.ReadLine();
+            string? id = Console.ReadLine();
             
             Console.Write("Enter name: ");
-            string name = Console.ReadLine();
+            string? name = Console.ReadLine();
             
             Console.Write("Enter IP address: ");
-            string ip = Console.ReadLine();
+            string? ip = Console.ReadLine();
             
             Console.Write("Enter network name (should contain 'MD Ltd.', but can be different): ");
-            string network = Console.ReadLine();
+            string? network = Console.ReadLine();
             
-            Embedded_devices device = new Embedded_devices(id, name, ip, network);
+            Embeddeddevices device = new Embeddeddevices(id, name, ip, network);
             manager.AddShit(device);
         }
         catch (Exception ex)
@@ -115,86 +116,80 @@ public class MenuBackGround
     }
 
 
-    public static void RemovingDevice(Device_Manager manager)
+    public static void RemovingDevice(DeviceManager manager)
     {
         Console.WriteLine("\n=== Remove Device ===");
         
         manager.ShowAllShits();
         
         Console.Write("Enter ID of device to remove: ");
-        string id = Console.ReadLine();
+        string? id = Console.ReadLine();
         
         manager.RemoveShit(id);
     }
 
 
-    public static void TurningOn(Device_Manager manager)
+    public static void TurningOn(DeviceManager manager)
     {
         Console.WriteLine("\n=== Turn On Device ===");
         
         manager.ShowAllShits();
         
         Console.Write("Enter ID of device to turn on: ");
-        string id = Console.ReadLine();
+        string? id = Console.ReadLine();
         
         manager.TurnOnShit(id);
     }
 
-    public static void TurningOff(Device_Manager manager)
+    public static void TurningOff(DeviceManager manager)
     {
         Console.WriteLine("\n=== Turn Off Device ===");
         
         manager.ShowAllShits();
         
         Console.Write("Enter ID of device to turn off: ");
-        string id = Console.ReadLine();
+        string? id = Console.ReadLine();
         
         manager.TurnOffShit(id);
     }
 
 
-    public static void EditMenu(Device_Manager manager)
+    public static void EditMenu(DeviceManager manager)
     {
         Console.WriteLine("\n=== EDITING DEVICE ===");
     
         manager.ShowAllShits();
     
         Console.Write("\nENTER DEVICE ID TO EDIT: ");
-        string deviceId = Console.ReadLine();
+        string? deviceId = Console.ReadLine();
     
         Device deviceToEdit = manager.FindShit(deviceId);
-    
-        if (deviceToEdit == null)
-        {
-            Console.WriteLine("DEVICE NOT FOUND");
-            return;
-        }
-    
+
         if (deviceToEdit is SmartWatches smartWatch)
         {
-            EditingSW(manager, smartWatch);
+            EditingSw(manager, smartWatch);
         }
-        else if (deviceToEdit is Personal_Computer pc)
+        else if (deviceToEdit is PersonalComputer pc)
         {
-            EditingPC(manager, pc);
+            EditingPc(manager, pc);
         }
-        else if (deviceToEdit is Embedded_devices embeddedDevice)
+        else if (deviceToEdit is Embeddeddevices embeddedDevice)
         {
-            EditingED(manager, embeddedDevice);
+            EditingEd(manager, embeddedDevice);
         }
         else
         {
             Console.WriteLine("UNKNOWN DEVICE TYPE. CANNOT EDIT");
         }
     }
-    
-    
-    static void EditingSW(Device_Manager manager, SmartWatches oldWatch)
+
+
+    private static void EditingSw(DeviceManager manager, SmartWatches oldWatch)
     {
         Console.WriteLine($"EDITING SMARTWATCH: {oldWatch.Name}");
     
         Console.Write("ENTER NEW NAME (EMPTY STRING WILL PUT CURRENT): ");
-        string newName = Console.ReadLine();
+        string? newName = Console.ReadLine();
     
         if (string.IsNullOrEmpty(newName))
         {
@@ -202,7 +197,7 @@ public class MenuBackGround
         }
     
         Console.Write("ENTER NEW BATTERY PERCENTAGE (EMPTY STRING WILL PUT CURRENT): ");
-        string batteryInput = Console.ReadLine();
+        string? batteryInput = Console.ReadLine();
         int newBattery = oldWatch.batteryPercent;
     
         if (!string.IsNullOrEmpty(batteryInput) && int.TryParse(batteryInput, out int parsedBattery))
@@ -217,7 +212,7 @@ public class MenuBackGround
             }
         }
     
-        SmartWatches newWatch = new SmartWatches(oldWatch.ID, newName, newBattery);
+        SmartWatches newWatch = new SmartWatches(oldWatch.Id, newName, newBattery);
     
         if (oldWatch.IsDeviceTurned)
         {
@@ -231,44 +226,44 @@ public class MenuBackGround
             }
         }
     
-        manager.EditShit(oldWatch.ID, newWatch);
+        manager.EditShit(oldWatch.Id, newWatch);
     }
-    
-    static void EditingPC(Device_Manager manager, Personal_Computer oldPC)
+
+    private static void EditingPc(DeviceManager manager, PersonalComputer oldPc)
     {
-        Console.WriteLine($"EDITING COMPUTER: {oldPC.Name}");
+        Console.WriteLine($"EDITING COMPUTER: {oldPc.Name}");
     
         Console.Write("ENTER NEW NAME (EMPTY STRING WILL PUT CURRENT): ");
-        string newName = Console.ReadLine();
+        string? newName = Console.ReadLine();
     
         if (string.IsNullOrEmpty(newName))
         {
-            newName = oldPC.Name;
+            newName = oldPc.Name;
         }
     
         Console.Write("ENTER NEW OS (EMPTY STRING WILL PUT CURRENT, 'null' FOR NO OS): ");
-        string osInput = Console.ReadLine();
-        string newOS = oldPC.OperatingSystem;
+        string? osInput = Console.ReadLine();
+        string? newOs = oldPc.OperatingSystem;
     
         if (!string.IsNullOrEmpty(osInput))
         {
             if (osInput.ToLower() == "null")
             {
-                newOS = null;
+                newOs = null;
             }
             else
             {
-                newOS = osInput;
+                newOs = osInput;
             }
         }
     
-        Personal_Computer newPC = new Personal_Computer(oldPC.ID, newName, newOS);
+        PersonalComputer newPc = new PersonalComputer(oldPc.Id, newName, newOs);
     
-        if (oldPC.IsDeviceTurned && !string.IsNullOrEmpty(newOS))
+        if (oldPc.IsDeviceTurned && !string.IsNullOrEmpty(newOs))
         {
             try
             {
-                newPC.TurnedOn();
+                newPc.TurnedOn();
             }
             catch (EmptySystemException)
             {
@@ -276,16 +271,16 @@ public class MenuBackGround
             }
         }
     
-        manager.EditShit(oldPC.ID, newPC);
+        manager.EditShit(oldPc.Id, newPc);
     }
-    
-    
-    static void EditingED(Device_Manager manager, Embedded_devices oldDevice)
+
+
+    private static void EditingEd(DeviceManager manager, Embeddeddevices oldDevice)
     {
         Console.WriteLine($"EDITING EMBEDDED DEVICE: {oldDevice.Name}");
     
         Console.Write("ENTER NEW NAME (EMPTY STRING WILL PUT CURRENT): ");
-        string newName = Console.ReadLine();
+        string? newName = Console.ReadLine();
     
         if (string.IsNullOrEmpty(newName))
         {
@@ -293,17 +288,17 @@ public class MenuBackGround
         }
     
         Console.Write("ENTER NEW IP ADDRESS (EMPTY STRING WILL PUT CURRENT): ");
-        string ipInput = Console.ReadLine();
-        string newIP = oldDevice.IPAddress;
+        string? ipInput = Console.ReadLine();
+        string? newIp = oldDevice.IpAddress;
     
         if (!string.IsNullOrEmpty(ipInput))
         {
-            newIP = ipInput;
+            newIp = ipInput;
         }
     
         Console.Write("ENTER NEW NETWORK NAME (EMPTY STRING WILL PUT CURRENT): ");
-        string networkInput = Console.ReadLine();
-        string newNetwork = oldDevice.NetworkName;
+        string? networkInput = Console.ReadLine();
+        string? newNetwork = oldDevice.NetworkName;
     
         if (!string.IsNullOrEmpty(networkInput))
         {
@@ -312,9 +307,9 @@ public class MenuBackGround
     
         try
         {
-            Embedded_devices newDevice = new Embedded_devices(oldDevice.ID, newName, newIP, newNetwork);
+            Embeddeddevices newDevice = new Embeddeddevices(oldDevice.Id, newName, newIp, newNetwork);
         
-            manager.EditShit(oldDevice.ID, newDevice);
+            manager.EditShit(oldDevice.Id, newDevice);
         }
         catch (ArgumentException ex)
         {

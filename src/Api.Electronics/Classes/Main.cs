@@ -1,5 +1,5 @@
 ﻿
-namespace Electronics;
+namespace Electronics.Classes;
 
 class MainClass
 {
@@ -8,7 +8,7 @@ class MainClass
         
         Console.WriteLine("Welcome to the Api.Electronics Device Managing System");
 
-        Device_Manager deviceManager = new Device_Manager("C:\\Users\\ovdiy\\OneDrive\\Рабочий стол\\APBD_Rider\\Api.Electronics\\Api.Electronics\\input.txt");
+        DeviceManager deviceManager = new DeviceManager("input.txt");
         
         bool isRunning = true;
 
@@ -17,7 +17,7 @@ class MainClass
             Menu();
             
             Console.WriteLine("Select an option:");
-            string option = Console.ReadLine();
+            string? option = Console.ReadLine();
             
             switch (option)
             {

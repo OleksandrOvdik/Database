@@ -1,38 +1,56 @@
 ﻿using Models;
+using Models.Classes;
 
-namespace Electronics;
+namespace Electronics.Classes;
 
 
 
-public class Device_Manager
+public class DeviceManager
 {
-    public const int MaxNumberOfDevice = 15;
+    private const int MaxNumberOfDevice = 15;
     
-    public List<Device> Devices;
+    public readonly List<Device> Devices;
+
+    private readonly string _filePath;
     
-    public string FilePath;
+    private static DeviceManager? _instance;
+    
+    
 
-
-
-    public Device_Manager(string filePath)
+    public static DeviceManager  Instance
     {
-        this.FilePath = filePath;
-        Devices = new List<Device>();
-
-        loadFromFile();
-
+        get
+        {
+            if (_instance == null)
+                _instance = new DeviceManager("input.txt");
+            
+            return _instance;
+        }
     }
 
-    private void loadFromFile()
+
+
+    public DeviceManager(string filePath)
     {
-        if (!File.Exists(FilePath))
+        this._filePath = filePath;
+        Devices = new List<Device>();
+
+        LoadFromFile();
+        
+
+    }
+    
+
+    private void LoadFromFile()
+    {
+        if (!File.Exists(_filePath))
         {
             Console.WriteLine("File does not exist");
         }
 
         try
         {
-            string[] lines = File.ReadAllLines(FilePath);
+            string[] lines = File.ReadAllLines(_filePath);
 
             foreach (string line in lines)
             {
@@ -57,12 +75,12 @@ public class Device_Manager
                         case "SW":
                             if (parts.Length >= 4)
                             {
-                                string Id = parts[0].Trim();
-                                string Name = parts[1].Trim();
+                                string? id = parts[0].Trim();
+                                string? name = parts[1].Trim();
                                 bool isTurnedOn = bool.Parse(parts[2].Trim());
                                 int battery = int.Parse(parts[3].TrimEnd('%'));
 
-                                SmartWatches watch = new SmartWatches(Id, Name, battery);
+                                SmartWatches watch = new SmartWatches(id, name, battery);
                                 if (isTurnedOn) watch.TurnedOn();
                                 Devices.Add(watch);
                             }
@@ -71,11 +89,11 @@ public class Device_Manager
                         case "P":
                             if (parts.Length >= 3)
                             {
-                                string id = parts[0].Trim();
-                                string name = parts[1].Trim();
+                                string? id = parts[0].Trim();
+                                string? name = parts[1].Trim();
                                 bool isTurnedOn = bool.Parse(parts[2].Trim());
 
-                                string os = null;
+                                string? os = null;
                                 if (parts.Length > 3)
                                 {
                                     os = parts[3].Trim();
@@ -83,7 +101,7 @@ public class Device_Manager
                                         os = null;
                                 }
 
-                                Personal_Computer pc = new Personal_Computer(id, name, os);
+                                PersonalComputer pc = new PersonalComputer(id, name, os);
                                 if (isTurnedOn && !string.IsNullOrEmpty(os)) pc.TurnedOn();
                                 Devices.Add(pc);
                             }
@@ -92,14 +110,14 @@ public class Device_Manager
                         case "ED":
                             if (parts.Length >= 4)
                             {
-                                string id = parts[0].Trim();
-                                string name = parts[1].Trim();
-                                string ip = parts[2].Trim();
-                                string network = parts[3].Trim();
+                                string? id = parts[0].Trim();
+                                string? name = parts[1].Trim();
+                                string? ip = parts[2].Trim();
+                                string? network = parts[3].Trim();
 
                                 try
                                 {
-                                    Embedded_devices embedded = new Embedded_devices(id, name, ip, network);
+                                    Embeddeddevices embedded = new Embeddeddevices(id, name, ip, network);
                                     Devices.Add(embedded);
                                 }
                                 catch (ArgumentException ex)
@@ -133,27 +151,27 @@ public class Device_Manager
     {
         try
         {
-            using (StreamWriter writer = new StreamWriter(FilePath))
+            using (StreamWriter writer = new StreamWriter(_filePath))
             {
                 foreach (Device device in Devices)
                 {
                     if (device is SmartWatches sw)
                     {
-                        writer.WriteLine($"{sw.ID},Apple Watch SE2,{(sw.IsDeviceTurned ? "True" : "False")},{sw.batteryPercent}%");
+                        writer.WriteLine($"{sw.Id},Apple Watch SE2,{(sw.IsDeviceTurned ? "True" : "False")},{sw.batteryPercent}%");
                     }
-                    else if (device is Personal_Computer pc)
+                    else if (device is PersonalComputer pc)
                     {
                         string os = pc.OperatingSystem ?? "null";
-                        writer.WriteLine($"{pc.ID},{pc.Name},{(pc.IsDeviceTurned ? "True" : "False")},{os}");
+                        writer.WriteLine($"{pc.Id},{pc.Name},{(pc.IsDeviceTurned ? "True" : "False")},{os}");
                     }
-                    else if (device is Embedded_devices ed)
+                    else if (device is Embeddeddevices ed)
                     {
-                        writer.WriteLine($"{ed.ID},{ed.Name},{ed.IPAddress},{ed.NetworkName}");
+                        writer.WriteLine($"{ed.Id},{ed.Name},{ed.IpAddress},{ed.NetworkName}");
                     }
                 }
             }
 
-            Console.WriteLine($"SAVED {Devices.Count} DEVICES TO KURBA -> {FilePath}");
+            Console.WriteLine($"SAVED {Devices.Count} DEVICES TO KURBA -> {_filePath}");
         }
         catch (Exception ex)
         {
@@ -168,18 +186,24 @@ public class Device_Manager
             Console.WriteLine("BUY 100 DOLLARS FOR MORE DEVICE SPACE");
             return;
         }
+
+        if (Devices.Exists(d => d.Id == device.Id))
+        {
+            Console.WriteLine("That is ilegal to add this device");
+            return;
+        }
         
         Devices.Add(device);
         Console.WriteLine($"ADD NEW DEVICE {device.Name}");
     }
 
-    public void RemoveShit(string deviceId)
+    public void RemoveShit(string? deviceId)
     {
         Device device = null;
 
         foreach (Device d in Devices)
         {
-            if (d.ID == deviceId)
+            if (d.Id == deviceId)
             {
                 device = d;
                 break;
@@ -199,22 +223,21 @@ public class Device_Manager
     }
 
 
-    public void EditShit(string deviceId, object newDevice)
+    public void EditShit(string? deviceId, object newDevice)
     {
-        int Index = -1;
+        int index = -1;
         for (int i = 0; i < Devices.Count; i++)
         {
-            if (Devices[i].ID == deviceId)
+            if (Devices[i].Id == deviceId)
             {
-                Index = i;
+                index = i;
                 break;
             }
             
         }
-
-        if (Index != -1 && newDevice is Device)
+        if (index != -1 && newDevice is Device)
         {
-            Devices[Index] = (Device)newDevice;
+            Devices[index] = (Device)newDevice;
             Console.WriteLine($"UPDATE DEVICE {deviceId}");
         }
         else
@@ -223,11 +246,11 @@ public class Device_Manager
         }
     }
 
-    public Device FindShit(string id)
+    public Device FindShit(string? id)
     {
         foreach (Device device in Devices)
         {
-            if (device.ID == id)
+            if (device.Id == id)
             {
                 return device;
             }
@@ -250,7 +273,7 @@ public class Device_Manager
         }
     }
 
-   public void TurnOnShit(string id)
+   public void TurnOnShit(string? id)
 {
     Device device = FindShit(id);
 
@@ -275,7 +298,7 @@ public class Device_Manager
                 smartWatch.TurnedOn();
                 Console.WriteLine($"SMARTWATCH {smartWatch.Name} TURNED ON");
             }
-            else if (device is Personal_Computer pc)
+            else if (device is PersonalComputer pc)
             {
                 if (string.IsNullOrEmpty(pc.OperatingSystem))
                 {
@@ -286,7 +309,7 @@ public class Device_Manager
                 pc.TurnedOn();
                 Console.WriteLine($"COMPUTER {pc.Name} TURNED ON WITH OS {pc.OperatingSystem}");
             }
-            else if (device is Embedded_devices embedded)
+            else if (device is Embeddeddevices embedded)
             {
                 try
                 {
@@ -319,7 +342,7 @@ public class Device_Manager
     }
 }
 
-    public void TurnOffShit(string id)
+    public void TurnOffShit(string? id)
     {
         Device device = FindShit(id);
 
@@ -335,7 +358,7 @@ public class Device_Manager
         return Devices.Count;
     }
 
-    public Device GetDeviceById(string id)
+    public Device GetDeviceById(string? id)
     {
         return FindShit(id);
     }

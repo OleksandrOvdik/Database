@@ -1,11 +1,11 @@
-﻿namespace Models;
+﻿namespace Models.Classes;
 // Personal_Computer -> P
-public class Personal_Computer : Device
+public class PersonalComputer : Device
     
 {
-    public  string OperatingSystem { get; set; }
+    public  string? OperatingSystem { get; set; }
 
-    public Personal_Computer(string id, string name, string operatingSystem = null) : base(id, name)
+    public PersonalComputer(string? id, string? name, string? operatingSystem = null) : base(id, name)
     {
         OperatingSystem = operatingSystem;
     }
@@ -25,6 +25,6 @@ public class Personal_Computer : Device
     public override string ToString()
     {
         string info = string.IsNullOrEmpty(OperatingSystem) ? "OS unknown" : $"OS: {OperatingSystem}";
-        return $"Computer: {Name}, ID-> {ID}, {info}, Mode: {(IsDeviceTurned ? "TurnedOn" : "TurnedOff")}";
+        return $"Computer: {Name}, ID-> {Id}, {info}, Mode: {(IsDeviceTurned ? "TurnedOn" : "TurnedOff")}";
     }
 }

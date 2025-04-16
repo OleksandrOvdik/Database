@@ -1,8 +1,10 @@
-﻿namespace Models;
+﻿using Models.Interface;
+
+namespace Models.Classes;
 // SmartWatches -> SW
 public class SmartWatches : Device, IPowerNotifier
 {
-    public int _batteryPercentage;
+    private int _batteryPercentage;
     public int batteryPercent
     {
         get
@@ -26,9 +28,9 @@ public class SmartWatches : Device, IPowerNotifier
     }
 
 
-    public SmartWatches(string id, string name, int BatteryPercent) : base(id, name)
+    public SmartWatches(string? id, string? name, int batteryPercent) : base(id, name)
     {
-        batteryPercent = BatteryPercent;    
+        this.batteryPercent = batteryPercent;    
     }
 
     public override void TurnedOn()
@@ -50,6 +52,6 @@ public class SmartWatches : Device, IPowerNotifier
 
     public override string ToString()
     {
-        return $"Smartwatch: ID -> {ID}, {Name}, Mode: {(IsDeviceTurned ? "TurnedOn" : "TurnedOff")}, Battery: {batteryPercent}%";
+        return $"Smartwatch: ID -> {Id}, {Name}, Mode: {(IsDeviceTurned ? "TurnedOn" : "TurnedOff")}, Battery: {batteryPercent}%";
     }
 }

@@ -1,13 +1,14 @@
 ﻿using System.Text.RegularExpressions;
-// Embedded_devices -> ED
-namespace Models;
 
-public class Embedded_devices : Device
+// Embedded_devices -> ED
+namespace Models.Classes;
+
+public class Embeddeddevices : Device
 {
 
-    public string _IpAddress;
+    public string? _IpAddress;
     
-    public string IPAddress
+    public string? IpAddress
     {
         get { return _IpAddress;} 
         set
@@ -21,12 +22,12 @@ public class Embedded_devices : Device
         }
     }
 
-    public string NetworkName { get; set; }
+    public string? NetworkName { get; set; }
     
     
-    public Embedded_devices(string id, string name, string ipAddress, string networkName) : base(id, name)
+    public Embeddeddevices(string? id, string? name, string? ipAddress, string? networkName) : base(id, name)
     {
-        IPAddress = ipAddress;
+        IpAddress = ipAddress;
         NetworkName = networkName;
     }
 
@@ -37,7 +38,7 @@ public class Embedded_devices : Device
             throw new ConnectionException();
         }
         
-        Console.WriteLine($"Device: {Name}, IP: {IPAddress}, Connected to Network: {NetworkName}");
+        Console.WriteLine($"Device: {Name}, IP: {IpAddress}, Connected to Network: {NetworkName}");
     }
 
     public override void TurnedOn()
@@ -58,6 +59,6 @@ public class Embedded_devices : Device
 
     public override string ToString()
     {
-        return $"Device: {Name}, ID -> {ID}, IP: {IPAddress}, Mode: {(IsDeviceTurned ? "TurnedOn" : "TurnedOff")}, Network: {NetworkName}";
+        return $"Device: {Name}, ID -> {Id}, IP: {IpAddress}, Mode: {(IsDeviceTurned ? "TurnedOn" : "TurnedOff")}, Network: {NetworkName}";
     }
 }

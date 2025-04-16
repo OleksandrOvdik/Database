@@ -2,13 +2,13 @@
     
 public class Device
 {
-    public string ID { get; set; }
-    public string Name { get; set; }
+    public string? Id { get; set; }
+    public string? Name { get; set; }
     public bool IsDeviceTurned { get; set; }
 
-    public Device(string id, string name)
+    protected Device(string? id, string? name)
     {
-        ID = id;
+        Id = id;
         Name = name;
         IsDeviceTurned = true;
     }

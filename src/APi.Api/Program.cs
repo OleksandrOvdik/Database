@@ -1,4 +1,5 @@
 using Electronics;
+using Electronics.Classes;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,10 +7,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton<Device_Manager>(serviceProvider => {
+builder.Services.AddSingleton<DeviceManager>(serviceProvider => {
     var configuration = builder.Configuration;
     string filePath = configuration["DeviceFilePath"] ?? "input.txt";
-    return new Device_Manager(filePath);
+    return new DeviceManager(filePath);
 });
 
 var app = builder.Build();
