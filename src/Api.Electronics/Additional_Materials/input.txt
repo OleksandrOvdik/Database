@@ -1,0 +1,6 @@
+SW-1,Apple Watch SE2,False,17%
+P-1,LinuxPC,False,Linux Mint
+P-2,ThinkPad T440,False,null
+ED-423,PPADADWDAWFA,3.3.3.3,pjatk
+SW-123,Apple Watch SE2,True,33%
+P-123,NewName,False,null
