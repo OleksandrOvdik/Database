@@ -32,6 +32,8 @@ public class SmartWatches : Device, IPowerNotifier
         this.batteryPercent = batteryPercent;    
     }
 
+    public SmartWatches() : base("", "") { }
+
     public override void TurnedOn()
     {
         if (batteryPercent < 11)

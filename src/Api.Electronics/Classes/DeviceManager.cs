@@ -117,7 +117,7 @@ public class DeviceManager
 
                                 try
                                 {
-                                    Embeddeddevices embedded = new Embeddeddevices(id, name, ip, network);
+                                    EmbeddedDevices embedded = new EmbeddedDevices(id, name, ip, network);
                                     Devices.Add(embedded);
                                 }
                                 catch (ArgumentException ex)
@@ -164,7 +164,7 @@ public class DeviceManager
                         string os = pc.OperatingSystem ?? "null";
                         writer.WriteLine($"{pc.Id},{pc.Name},{(pc.IsDeviceTurned ? "True" : "False")},{os}");
                     }
-                    else if (device is Embeddeddevices ed)
+                    else if (device is EmbeddedDevices ed)
                     {
                         writer.WriteLine($"{ed.Id},{ed.Name},{ed.IpAddress},{ed.NetworkName}");
                     }
@@ -309,7 +309,7 @@ public class DeviceManager
                 pc.TurnedOn();
                 Console.WriteLine($"COMPUTER {pc.Name} TURNED ON WITH OS {pc.OperatingSystem}");
             }
-            else if (device is Embeddeddevices embedded)
+            else if (device is EmbeddedDevices embedded)
             {
                 try
                 {

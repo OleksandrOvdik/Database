@@ -9,6 +9,10 @@ public class PersonalComputer : Device
         OperatingSystem = operatingSystem;
     }
 
+    public PersonalComputer() : base("","")
+    {
+    }
+
 
     public override void TurnedOn()
     {

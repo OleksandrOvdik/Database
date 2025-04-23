@@ -104,7 +104,7 @@ public class MenuBackGround
             Console.Write("Enter network name (should contain 'MD Ltd.', but can be different): ");
             string? network = Console.ReadLine();
             
-            Embeddeddevices device = new Embeddeddevices(id, name, ip, network);
+            EmbeddedDevices device = new EmbeddedDevices(id, name, ip, network);
             manager.AddShit(device);
         }
         catch (Exception ex)
@@ -171,7 +171,7 @@ public class MenuBackGround
         {
             EditingPc(manager, pc);
         }
-        else if (deviceToEdit is Embeddeddevices embeddedDevice)
+        else if (deviceToEdit is EmbeddedDevices embeddedDevice)
         {
             EditingEd(manager, embeddedDevice);
         }
@@ -273,7 +273,7 @@ public class MenuBackGround
     }
 
 
-    private static void EditingEd(DeviceManager manager, Embeddeddevices oldDevice)
+    private static void EditingEd(DeviceManager manager, EmbeddedDevices oldDevice)
     {
         Console.WriteLine($"EDITING EMBEDDED DEVICE: {oldDevice.Name}");
     
@@ -305,7 +305,7 @@ public class MenuBackGround
     
         try
         {
-            Embeddeddevices newDevice = new Embeddeddevices(oldDevice.Id, newName, newIp, newNetwork);
+            EmbeddedDevices newDevice = new EmbeddedDevices(oldDevice.Id, newName, newIp, newNetwork);
         
             manager.EditShit(oldDevice.Id, newDevice);
         }

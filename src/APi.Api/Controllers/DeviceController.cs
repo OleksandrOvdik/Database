@@ -51,7 +51,7 @@ namespace Api.Controllers
          }
          
          [HttpPost("embedded-devices")]
-         public IResult AddDevice(Embeddeddevices device)
+         public IResult AddDevice(EmbeddedDevices device)
          {
              DeviceManager.Instance.AddShit(device);
              return Results.Ok();
@@ -86,7 +86,7 @@ namespace Api.Controllers
          }
          
          [HttpPut("embedded-devices/:id")]
-         public IResult UpdateEdDevice(string? id, [FromBody] Embeddeddevices device)
+         public IResult UpdateEdDevice(string? id, [FromBody] EmbeddedDevices device)
          {
              DeviceManager.Instance.EditShit(id, device);
              try

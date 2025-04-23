@@ -2,7 +2,7 @@
 
 // Embedded_devices -> ED
 namespace Models.Classes;
-public class Embeddeddevices : Device
+public class EmbeddedDevices : Device
 {
 
     public string? _IpAddress;
@@ -24,10 +24,14 @@ public class Embeddeddevices : Device
     public string? NetworkName { get; set; }
     
     
-    public Embeddeddevices(string? id, string? name, string? ipAddress, string? networkName) : base(id, name)
+    public EmbeddedDevices(string? id, string? name, string? ipAddress, string? networkName) : base(id, name)
     {
         IpAddress = ipAddress;
         NetworkName = networkName;
+    }
+
+    public EmbeddedDevices() : base("","")
+    {
     }
 
     public void Connect()
