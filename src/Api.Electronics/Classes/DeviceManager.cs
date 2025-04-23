@@ -362,5 +362,4 @@ public class DeviceManager
     {
         return FindShit(id);
     }
-    
 }

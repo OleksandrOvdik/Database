@@ -1,7 +1,6 @@
 ﻿namespace Models.Classes;
 // Personal_Computer -> P
 public class PersonalComputer : Device
-    
 {
     public  string? OperatingSystem { get; set; }
 

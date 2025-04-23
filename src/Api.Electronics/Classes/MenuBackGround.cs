@@ -1,8 +1,6 @@
 ﻿using Models;
 using Models.Classes;
-
 namespace Electronics.Classes;
-
 public class MenuBackGround
 {
     public static void AddingMenu(DeviceManager manager)

@@ -3,5 +3,4 @@
 interface IPowerNotifier
 {
     void NotifyPower();
-    
 }

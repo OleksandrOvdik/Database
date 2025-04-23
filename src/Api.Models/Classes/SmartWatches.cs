@@ -26,8 +26,7 @@ public class SmartWatches : Device, IPowerNotifier
             _batteryPercentage = value;
         }
     }
-
-
+    
     public SmartWatches(string? id, string? name, int batteryPercent) : base(id, name)
     {
         this.batteryPercent = batteryPercent;    

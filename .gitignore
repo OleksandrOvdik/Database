@@ -494,3 +494,7 @@ obj/
 
 # Test directories
 Electronics.Tests/
+
+
+#Remove configuration files
+appsettings.*

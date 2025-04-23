@@ -2,7 +2,6 @@
 
 // Embedded_devices -> ED
 namespace Models.Classes;
-
 public class Embeddeddevices : Device
 {
 
