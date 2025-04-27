@@ -8,10 +8,10 @@ using System.Text.Json.Nodes;
 
 namespace Electronics;
 
-public class DeviceService
+public class DeviceService : IDeviceService
 {
     private string _connectionString;
-
+    
     public DeviceService(string connectionString)
     {
         _connectionString = connectionString;
@@ -147,104 +147,104 @@ public class DeviceService
     }
     
     
-     public string CreateDevice(string jsonDeviceSpecificData)
-    {
-        var json = JsonNode.Parse(jsonDeviceSpecificData);
-        
-        var deviceType = json["deviceType"]?.ToString();
-        var name = json["name"]?.ToString();
-        var isTurnedOn = json["isTurnedOn"]?.ToString();
-
-
-        string newId = $"{deviceType.ToUpper()}-{Guid.NewGuid().ToString().Substring(0, 8)}";
-
-        using (var connection = new SqlConnection(_connectionString))
-        {
-            connection.Open();
-
-            
-
-            switch (deviceType.ToUpper())
-            {
-                case "SW":
-                    var watchData = JsonSerializer.Deserialize<SmartWatches>(jsonDeviceSpecificData);
-                    var insertSw = @"INSERT INTO Devices (Id, Name, IsDeviceTurned, Type) 
-                                 VALUES (@Id, @Name, @IsDeviceTurned, @Type)";
-                    using (var command = new SqlCommand(insertSw, connection))
-                    {
-                        command.Parameters.AddWithValue("@Id", newId);
-                        command.Parameters.AddWithValue("@Name", name);
-                        command.Parameters.AddWithValue("@IsDeviceTurned", isTurnedOn);
-                        command.Parameters.AddWithValue("@Type", deviceType.ToUpper());
-                        command.ExecuteNonQuery();
-                    }
-                    var insertWatch = @"INSERT INTO SmartWatches (DeviceId, BatteryPercent) VALUES (@Id, @Battery)";
-                    using (var command = new SqlCommand(insertWatch, connection))
-                    {
-                        command.Parameters.AddWithValue("@Id", newId);
-                        command.Parameters.AddWithValue("@Battery", watchData.batteryPercent);
-                        command.ExecuteNonQuery();
-                    }
-                    break;
-
-                case "PS":
-                    var pcData = JsonSerializer.Deserialize<PersonalComputer>(jsonDeviceSpecificData);
-                    
-                    var insertComputer = @"INSERT INTO Devices (Id, Name, IsDeviceTurned, Type) 
-                                 VALUES (@Id, @Name, @IsDeviceTurned, @Type)";
-                    using (var command = new SqlCommand(insertComputer, connection))
-                    {
-                        command.Parameters.AddWithValue("@Id", newId);
-                        command.Parameters.AddWithValue("@Name", name);
-                        command.Parameters.AddWithValue("@IsDeviceTurned", isTurnedOn);
-                        command.Parameters.AddWithValue("@Type", deviceType.ToUpper());
-                        command.ExecuteNonQuery();
-                    }
-                    
-                    var insertPc = @"INSERT INTO PersonalComputers (DeviceId, OperatingSystem) VALUES (@Id, @OS)";
-                    using (var command = new SqlCommand(insertPc, connection))
-                    {
-                        command.Parameters.AddWithValue("@Id", newId);
-                        command.Parameters.AddWithValue("@OS", pcData.OperatingSystem);
-                        command.ExecuteNonQuery();
-                    }
-                    break;
-
-                case "ED":
-                    var embeddedData = JsonSerializer.Deserialize<EmbeddedDevices>(jsonDeviceSpecificData);
-                    
-                    var insertED = @"INSERT INTO Devices (Id, Name, IsDeviceTurned, Type) 
-                                 VALUES (@Id, @Name, @IsDeviceTurned, @Type)";
-                    using (var command = new SqlCommand(insertED, connection))
-                    {
-                        command.Parameters.AddWithValue("@Id", newId);
-                        command.Parameters.AddWithValue("@Name", name);
-                        command.Parameters.AddWithValue("@IsDeviceTurned", isTurnedOn);
-                        command.Parameters.AddWithValue("@Type", deviceType.ToUpper());
-                        command.ExecuteNonQuery();
-                    }
-                    
-                    var insertEd = @"INSERT INTO EmbeddedDevices (DeviceId, IpAddress, NetworkName) VALUES (@Id, @Ip, @Network)";
-                    using (var command = new SqlCommand(insertEd, connection))
-                    {
-                        command.Parameters.AddWithValue("@Id", newId);
-                        command.Parameters.AddWithValue("@Ip", embeddedData.IpAddress);
-                        command.Parameters.AddWithValue("@Network", embeddedData.NetworkName);
-                        command.ExecuteNonQuery();
-                    }
-                    break;
-
-                default:
-                    throw new ArgumentException("Invalid device type");
-            }
-
-            return newId;
-        }
-    }
+          public string CreateDevice(string jsonData)
+         {
+             var json = JsonNode.Parse(jsonData);
+             
+             var deviceType = json["deviceType"]?.ToString();
+             var name = json["name"]?.ToString();
+             var isTurnedOn = json["isTurnedOn"]?.ToString();
+         
+         
+             string newId = $"{deviceType.ToUpper()}-{Guid.NewGuid().ToString().Substring(0, 8)}";
+         
+             using (var connection = new SqlConnection(_connectionString))
+             {
+                 connection.Open();
+                 
+                 
+                 switch (deviceType.ToUpper())
+                 {
+                     case "SW":
+                         var watchData = JsonSerializer.Deserialize<SmartWatches>(jsonData);
+                         var insertSw = @"INSERT INTO Devices (Id, Name, IsDeviceTurned, Type) 
+                                      VALUES (@Id, @Name, @IsDeviceTurned, @Type)";
+                         using (var command = new SqlCommand(insertSw, connection))
+                         {
+                             command.Parameters.AddWithValue("@Id", newId);
+                             command.Parameters.AddWithValue("@Name", name);
+                             command.Parameters.AddWithValue("@IsDeviceTurned", isTurnedOn);
+                             command.Parameters.AddWithValue("@Type", deviceType.ToUpper());
+                             command.ExecuteNonQuery();
+                         }
+                         var insertWatch = @"INSERT INTO SmartWatches (DeviceId, BatteryPercent) VALUES (@Id, @Battery)";
+                         using (var command = new SqlCommand(insertWatch, connection))
+                         {
+                             command.Parameters.AddWithValue("@Id", newId);
+                             command.Parameters.AddWithValue("@Battery", watchData.batteryPercent);
+                             command.ExecuteNonQuery();
+                         }
+                         break;
+         
+                     case "PC":
+                         var pcData = JsonSerializer.Deserialize<PersonalComputer>(jsonData);
+                         
+                         
+                         var insertComputer = @"INSERT INTO Devices (Id, Name, IsDeviceTurned, Type) 
+                                      VALUES (@Id, @Name, @IsDeviceTurned, @Type)";
+                         using (var command = new SqlCommand(insertComputer, connection))
+                         {
+                             command.Parameters.AddWithValue("@Id", newId);
+                             command.Parameters.AddWithValue("@Name", name);
+                             command.Parameters.AddWithValue("@IsDeviceTurned", isTurnedOn);
+                             command.Parameters.AddWithValue("@Type", deviceType.ToUpper());
+                             command.ExecuteNonQuery();
+                         }
+                         
+                         var insertPc = @"INSERT INTO PersonalComputers (DeviceId, OperatingSystem) VALUES (@Id, @OS)";
+                         using (var command = new SqlCommand(insertPc, connection))
+                         {
+                             command.Parameters.AddWithValue("@Id", newId);
+                             command.Parameters.AddWithValue("@OS", pcData.OperatingSystem);
+                             command.ExecuteNonQuery();
+                         }
+                         break;
+         
+                     case "ED":
+                         var embeddedData = JsonSerializer.Deserialize<EmbeddedDevices>(jsonData);
+                         
+                         var insertED = @"INSERT INTO Devices (Id, Name, IsDeviceTurned, Type) 
+                                      VALUES (@Id, @Name, @IsDeviceTurned, @Type)";
+                         using (var command = new SqlCommand(insertED, connection))
+                         {
+                             command.Parameters.AddWithValue("@Id", newId);
+                             command.Parameters.AddWithValue("@Name", name);
+                             command.Parameters.AddWithValue("@IsDeviceTurned", isTurnedOn);
+                             command.Parameters.AddWithValue("@Type", deviceType.ToUpper());
+                             command.ExecuteNonQuery();
+                         }
+                         
+                         var insertEd = @"INSERT INTO EmbeddedDevices (DeviceId, IpAddress, NetworkName) VALUES (@Id, @Ip, @Network)";
+                         using (var command = new SqlCommand(insertEd, connection))
+                         {
+                             command.Parameters.AddWithValue("@Id", newId);
+                             command.Parameters.AddWithValue("@Ip", embeddedData.IpAddress);
+                             command.Parameters.AddWithValue("@Network", embeddedData.NetworkName);
+                             command.ExecuteNonQuery();
+                         }
+                         break;
+         
+                     default:
+                         throw new ArgumentException("Invalid device type");
+                 }
+         
+                 return newId;
+             }
+         }
      
-      public void UpdateDevice(string jsonDeviceSpecificData)
+      public void UpdateDevice(string jsonData)
     {
-        var json = JsonNode.Parse(jsonDeviceSpecificData);
+        var json = JsonNode.Parse(jsonData);
         
         var deviceType = json["deviceType"]?.ToString();
         var name = json["name"]?.ToString();
@@ -266,7 +266,7 @@ public class DeviceService
             switch (deviceType.ToUpper())
             {
                 case "SW":
-                    var watchData = JsonSerializer.Deserialize<SmartWatches>(jsonDeviceSpecificData);
+                    var watchData = JsonSerializer.Deserialize<SmartWatches>(jsonData);
                     var updateSw = @"UPDATE SmartWatches SET BatteryPercent = @Battery WHERE DeviceId = @Id";
                     using (var nigger = new SqlCommand(updateSw, connection))
                     {
@@ -275,8 +275,8 @@ public class DeviceService
                         nigger.ExecuteNonQuery();
                     }
                     break;
-                case "PS":
-                    var pcData = JsonSerializer.Deserialize<PersonalComputer>(jsonDeviceSpecificData);
+                case "PC":
+                    var pcData = JsonSerializer.Deserialize<PersonalComputer>(jsonData);
                     var updatePc = @"UPDATE PersonalComputers SET OperatingSystem = @OS WHERE DeviceId = @Id";
                     using (var command = new SqlCommand(updatePc, connection))
                     {
@@ -286,7 +286,7 @@ public class DeviceService
                     }
                     break;
                 case "ED":
-                    var embeddedData = JsonSerializer.Deserialize<EmbeddedDevices>(jsonDeviceSpecificData);
+                    var embeddedData = JsonSerializer.Deserialize<EmbeddedDevices>(jsonData);
                     var updateEd = @"UPDATE EmbeddedDevices SET IpAddress = @Ip, NetworkName = @Network WHERE DeviceId = @Id";
                     using (var command = new SqlCommand(updateEd, connection))
                     {
@@ -316,99 +316,7 @@ public class DeviceService
             }
         }
     }
+    
 
-    /*public string CreateSmartWatch(string name, bool isTurnedOn, string jsonDeviceSpecificData)
-    {
-        string newId = $"SW-{Guid.NewGuid().ToString().Substring(0, 8)}";
-
-        using (var connection = new SqlConnection(_connectionString))
-        {
-            connection.Open();
-
-            var data = JsonConvert.DeserializeObject<SmartWatches>(jsonDeviceSpecificData);
-
-            var insertDevice = @"INSERT INTO Devices (Id, Name, IsDeviceTurned, Type) VALUES (@Id, @Name, @IsDeviceTurned, 'SW')";
-            using (var command = new SqlCommand(insertDevice, connection))
-            {
-                command.Parameters.AddWithValue("@Id", newId);
-                command.Parameters.AddWithValue("@Name", name);
-                command.Parameters.AddWithValue("@IsDeviceTurned", isTurnedOn);
-                command.ExecuteNonQuery();
-            }
-
-            var insertSw = @"INSERT INTO SmartWatches (DeviceId, BatteryPercent) VALUES (@Id, @Battery)";
-            using (var command = new SqlCommand(insertSw, connection))
-            {
-                command.Parameters.AddWithValue("@Id", newId);
-                command.Parameters.AddWithValue("@Battery", data.batteryPercent);
-                command.ExecuteNonQuery();
-            }
-
-            return newId;
-        }
-    }
-
-    public string CreatePersonalComputer(string name, bool isTurnedOn, string jsonDeviceSpecificData)
-    {
-        string newId = $"PS-{Guid.NewGuid().ToString().Substring(0, 8)}";
-
-        using (var connection = new SqlConnection(_connectionString))
-        {
-            connection.Open();
-
-            var data = JsonConvert.DeserializeObject<PersonalComputer>(jsonDeviceSpecificData);
-
-            var insertDevice = @"INSERT INTO Devices (Id, Name, IsDeviceTurned, Type) VALUES (@Id, @Name, @IsDeviceTurned, 'PS')";
-            using (var command = new SqlCommand(insertDevice, connection))
-            {
-                command.Parameters.AddWithValue("@Id", newId);
-                command.Parameters.AddWithValue("@Name", name);
-                command.Parameters.AddWithValue("@IsDeviceTurned", isTurnedOn);
-                command.ExecuteNonQuery();
-            }
-
-            var insertPc = @"INSERT INTO PersonalComputers (DeviceId, OperatingSystem) VALUES (@Id, @OS)";
-            using (var command = new SqlCommand(insertPc, connection))
-            {
-                command.Parameters.AddWithValue("@Id", newId);
-                command.Parameters.AddWithValue("@OS", data.OperatingSystem);
-                command.ExecuteNonQuery();
-            }
-
-            return newId;
-        }
-    }
-
-    public string CreateEmbeddedDevice(string name, bool isTurnedOn, string jsonDeviceSpecificData)
-    {
-        string newId = $"ED-{Guid.NewGuid().ToString().Substring(0, 8)}";
-
-        using (var connection = new SqlConnection(_connectionString))
-        {
-            connection.Open();
-
-            var data = JsonConvert.DeserializeObject<EmbeddedDevices>(jsonDeviceSpecificData);
-
-            var insertDevice = @"INSERT INTO Devices (Id, Name, IsDeviceTurned, Type) VALUES (@Id, @Name, @IsDeviceTurned, 'ED')";
-            using (var command = new SqlCommand(insertDevice, connection))
-            {
-                command.Parameters.AddWithValue("@Id", newId);
-                command.Parameters.AddWithValue("@Name", name);
-                command.Parameters.AddWithValue("@IsDeviceTurned", isTurnedOn);
-                command.ExecuteNonQuery();
-            }
-
-            var insertEd = @"INSERT INTO EmbeddedDevices (DeviceId, IpAddress, NetworkName) VALUES (@Id, @Ip, @Network)";
-            using (var command = new SqlCommand(insertEd, connection))
-            {
-                command.Parameters.AddWithValue("@Id", newId);
-                command.Parameters.AddWithValue("@Ip", data.IpAddress);
-                command.Parameters.AddWithValue("@Network", data.NetworkName);
-                command.ExecuteNonQuery();
-            }
-
-            return newId;
-        }
-    }*/
 
 }

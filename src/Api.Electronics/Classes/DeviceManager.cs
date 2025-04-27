@@ -86,7 +86,7 @@ public class DeviceManager
                             }
 
                             break;
-                        case "P":
+                        case "PС":
                             if (parts.Length >= 3)
                             {
                                 string? id = parts[0].Trim();
