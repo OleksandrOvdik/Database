@@ -18,6 +18,10 @@ builder.Services.AddSingleton<DeviceManager>(serviceProvider => {
     return new DeviceManager(filePath);
 });
 
+builder.Services.AddSingleton<DeviceService>(serviceProvider => {
+    return new DeviceService(connectionString);
+});
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
