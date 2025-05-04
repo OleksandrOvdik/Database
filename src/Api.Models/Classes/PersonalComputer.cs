@@ -9,7 +9,7 @@ public class PersonalComputer : Device
         OperatingSystem = operatingSystem;
     }
 
-    public PersonalComputer() : base("","")
+    public PersonalComputer(Device baseDevice) : base("","")
     {
     }
 

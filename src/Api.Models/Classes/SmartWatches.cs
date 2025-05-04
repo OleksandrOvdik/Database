@@ -32,7 +32,7 @@ public class SmartWatches : Device, IPowerNotifier
         this.batteryPercent = batteryPercent;    
     }
 
-    public SmartWatches() : base("", "") { }
+    public SmartWatches(Device baseDevice) : base("", "") { }
 
     public override void TurnedOn()
     {

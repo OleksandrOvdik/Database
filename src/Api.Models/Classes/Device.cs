@@ -6,11 +6,15 @@ public class Device
     public string? Name { get; set; }
     public bool IsDeviceTurned { get; set; }
 
-    protected Device(string? id, string? name)
+    public Device(string? id, string? name)
     {
         Id = id;
         Name = name;
         IsDeviceTurned = true;
+    }
+
+    public Device()
+    {
     }
 
     public virtual void TurnedOn()

@@ -30,7 +30,7 @@ public class EmbeddedDevices : Device
         NetworkName = networkName;
     }
 
-    public EmbeddedDevices() : base("","")
+    public EmbeddedDevices(Device baseDevice) : base("","")
     {
     }
 
