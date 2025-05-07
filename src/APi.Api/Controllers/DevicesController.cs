@@ -9,9 +9,9 @@ namespace Api.Controllers
     [Route("api/[controller]")]
     public class DevicesController : ControllerBase
     {
-        private readonly DeviceService _deviceService;
+        private readonly IDeviceService _deviceService;
 
-        public DevicesController(DeviceService deviceService)
+        public DevicesController(IDeviceService deviceService)
         {
             _deviceService = deviceService;
         }

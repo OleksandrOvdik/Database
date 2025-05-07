@@ -6,6 +6,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Electronics", "src\Api.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Models", "src\Api.Models\Api.Models.csproj", "{E0722259-A4F8-4F21-913C-559585ECF2B0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Repository", "src\Api.Repository\Api.Repository.csproj", "{B2070B93-05E7-4447-B96C-E8630BCAC241}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.DTO", "src\Api.DTO\Api.DTO.csproj", "{50C75769-DE73-4393-8EC3-29138B610579}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +28,13 @@ Global
 		{E0722259-A4F8-4F21-913C-559585ECF2B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E0722259-A4F8-4F21-913C-559585ECF2B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E0722259-A4F8-4F21-913C-559585ECF2B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2070B93-05E7-4447-B96C-E8630BCAC241}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2070B93-05E7-4447-B96C-E8630BCAC241}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2070B93-05E7-4447-B96C-E8630BCAC241}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2070B93-05E7-4447-B96C-E8630BCAC241}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50C75769-DE73-4393-8EC3-29138B610579}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50C75769-DE73-4393-8EC3-29138B610579}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50C75769-DE73-4393-8EC3-29138B610579}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50C75769-DE73-4393-8EC3-29138B610579}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

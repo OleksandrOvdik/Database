@@ -1,6 +1,6 @@
-﻿namespace Electronics;
+﻿namespace Api.DTO;
 
-public class DeviceDto
+public class DeviceDTO
 {
     public string? Id { get; set; }
     public string? Name { get; set; }

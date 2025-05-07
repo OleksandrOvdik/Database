@@ -1,9 +1,10 @@
 ﻿using Api.DTO;
 using Models;
 
-namespace Electronics;
+namespace Repository.Interface;
 
-public interface IDeviceService
+public interface IDeviceRepository
+
 {
     public IEnumerable<DeviceDTO> GetAllModels();
     public Device GetDeviceById(string? id);

@@ -1,14 +1,14 @@
-﻿INSERT INTO Devices (Id, Name, IsDeviceTurned, Type)
+﻿INSERT INTO Device (Id, Name, IsEnabled)
 VALUES
-    ('ED-123', 'Security Camera', 1, 'ED'),
-    ('PC-456', 'Office PC', 0, 'PC'),
-    ('SW-789', 'Fitness Tracker', 1, 'SW');
+    ('ED-123', 'Security Camera', 1),
+    ('PC-456', 'Office PC', 0),
+    ('SW-789', 'Fitness Tracker', 1);
 
-INSERT INTO EmbeddedDevices (DeviceId, IpAddress, NetworkName)
-VALUES ('ED-123', '192.168.0.100', 'MD Ltd HQ');
+INSERT INTO Embedded (lpAddress, NetworkName, DeviceId)
+VALUES ('192.168.0.100', 'MD Ltd HQ', 'ED-123');
 
-INSERT INTO PersonalComputers (DeviceId, OperatingSystem)
-VALUES ('PC-456', 'Ubuntu 22.04');
+INSERT INTO PersonalComputer (OperationSystem, DeviceId)
+VALUES ('Ubuntu 22.04', 'PC-456');
 
-INSERT INTO SmartWatches (DeviceId, BatteryPercent)
-VALUES ('SW-789', 75);
+INSERT INTO Smartwatch (BatteryPercentage, DeviceId)
+VALUES (75, 'SW-789');

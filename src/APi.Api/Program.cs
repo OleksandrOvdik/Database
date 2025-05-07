@@ -1,12 +1,11 @@
 using Electronics;
 using Electronics.Classes;
+using Repository;
+using Repository.Interface;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("UniversityDatabase");
-
-
-
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -18,9 +17,9 @@ builder.Services.AddSingleton<DeviceManager>(serviceProvider => {
     return new DeviceManager(filePath);
 });
 
-builder.Services.AddSingleton<DeviceService>(serviceProvider => {
-    return new DeviceService(connectionString);
-});
+builder.Services.AddSingleton<IDeviceService, DeviceService >(DeviceService =>
+    new DeviceService(new DeviceRepository(connectionString))
+);
 
 var app = builder.Build();
 
