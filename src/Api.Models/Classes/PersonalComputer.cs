@@ -4,14 +4,15 @@ public class PersonalComputer : Device
 {
     public  string? OperatingSystem { get; set; }
 
-    public PersonalComputer(string? id, string? name, string? operatingSystem = null) : base(id, name)
+    public PersonalComputer(string? id, string? name, string? operatingSystem) : base(id, name)
     {
         OperatingSystem = operatingSystem;
     }
 
-    public PersonalComputer(Device baseDevice) : base("","")
+    public PersonalComputer(Device baseDevice) : base("", "")
     {
     }
+    
 
 
     public override void TurnedOn()

@@ -4,7 +4,7 @@ VALUES
     ('PC-456', 'Office PC', 0),
     ('SW-789', 'Fitness Tracker', 1);
 
-INSERT INTO Embedded (lpAddress, NetworkName, DeviceId)
+INSERT INTO Embedded (IpAddress, NetworkName, DeviceId)
 VALUES ('192.168.0.100', 'MD Ltd HQ', 'ED-123');
 
 INSERT INTO PersonalComputer (OperationSystem, DeviceId)

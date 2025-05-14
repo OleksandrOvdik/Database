@@ -8,7 +8,7 @@ public interface IDeviceRepository
 {
     public IEnumerable<DeviceDTO> GetAllModels();
     public Device GetDeviceById(string? id);
-    public string CreateDevice(string jsonData);
-    public bool UpdateDevice(string jsonData);
-    public bool DeleteDevice(string deviceId);
+    public Task<string> CreateDevice(string jsonData);
+    public Task<bool> UpdateDevice(string jsonData);
+    public Task<bool> DeleteDevice(string deviceId);
 }

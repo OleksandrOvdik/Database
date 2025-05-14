@@ -1,4 +1,5 @@
 
+using System.Text.Json;
 using System.Text.Json.Nodes;
 using Electronics;
 using Microsoft.AspNetCore.Mvc;
@@ -6,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("/api/[controller]")]
     public class DevicesController : ControllerBase
     {
         private readonly IDeviceService _deviceService;
@@ -40,43 +41,36 @@ namespace Api.Controllers
         {
             string? contentType = Request.ContentType?.ToLower();
 
-            switch (contentType)
+            try
             {
-                case "application/json":
+                using var reader = new StreamReader(Request.Body);
+                var rawData = await reader.ReadToEndAsync();
+
+                if (string.IsNullOrWhiteSpace(rawData))
+                    return BadRequest("Request body is empty");
+
+                switch (contentType)
                 {
-                    using var reader = new StreamReader(Request.Body);
-                    string rawJson = await reader.ReadToEndAsync();
-
-                    var json = JsonNode.Parse(rawJson);
-                    if (json == null)
-                    {
-                        return BadRequest("Invalid JSON format.");
-                    }
-
-                    var deviceType = json["deviceType"];
-                    if (deviceType == null)
-                    {
-                        return BadRequest("Missing deviceType.");
-                    }
-
-                    try
-                    {
-                        string newId = _deviceService.CreateDevice(rawJson);
+                    case "application/json":
+                    case "text/plain": 
+                        var newId = await _deviceService.CreateDevice(rawData);
                         return CreatedAtAction(nameof(GetDeviceById), new { id = newId }, new { id = newId });
-                    }
-                    catch (Exception ex)
-                    {
-                        return BadRequest($"Error creating device: {ex.Message}");
-                    }
+            
+                    default:
+                        return Conflict("Unsupported Content-Type. Only 'application/json' or 'text/plain' are accepted.");
                 }
-
-                case "text/plain":
-                {
-                    return BadRequest("Plain text import is not yet implemented.");
-                }
-
-                default:
-                    return Conflict("Unsupported Content-Type. Only 'application/json' or 'text/plain' are accepted.");
+            }
+            catch (JsonException)
+            {
+                return BadRequest("Invalid JSON format");
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
 
@@ -102,7 +96,7 @@ namespace Api.Controllers
             try
             {
                 _deviceService.UpdateDevice(rawJson);
-                return NoContent(); 
+                return Ok(); 
             }
             catch (Exception ex)
             {
@@ -116,7 +110,7 @@ namespace Api.Controllers
             try
             {
                 _deviceService.DeleteDevice(id);
-                return NoContent();
+                return Ok();
             }
             catch (Exception ex)
             {

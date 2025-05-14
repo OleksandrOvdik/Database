@@ -7,7 +7,10 @@ public interface IDeviceService
 {
     public IEnumerable<DeviceDTO> GetAllModels();
     public Device GetDeviceById(string? id);
-    public string CreateDevice(string jsonData);
-    public bool UpdateDevice(string jsonData);
-    public bool DeleteDevice(string deviceId);
+    public Task<string> CreateDevice(string data);
+    public Task<bool> UpdateDevice(string jsonData);
+    public Task<bool> DeleteDevice(string deviceId);
+    public bool isJson(string input);
+    public Device ParseTextData(string textData);
+    public string ToJson(Device device);
 }
