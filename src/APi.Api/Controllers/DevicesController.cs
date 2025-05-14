@@ -52,12 +52,13 @@ namespace Api.Controllers
                 switch (contentType)
                 {
                     case "application/json":
-                    case "text/plain": 
+                    case "text/plain":
                         var newId = await _deviceService.CreateDevice(rawData);
                         return CreatedAtAction(nameof(GetDeviceById), new { id = newId }, new { id = newId });
-            
+
                     default:
-                        return Conflict("Unsupported Content-Type. Only 'application/json' or 'text/plain' are accepted.");
+                        return Conflict(
+                            "Unsupported Content-Type. Only 'application/json' or 'text/plain' are accepted.");
                 }
             }
             catch (JsonException)
@@ -72,6 +73,7 @@ namespace Api.Controllers
             {
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
+            
         }
 
         [HttpPut]

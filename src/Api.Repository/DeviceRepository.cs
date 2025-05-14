@@ -1,10 +1,7 @@
 ﻿using System.Data;
 using Api.DTO;
-using Azure.Core;
 using Repository.Interface;
-
 namespace Repository;
-
 using Microsoft.Data.SqlClient;
 using Models;
 using Models.Classes;
@@ -136,91 +133,58 @@ public class DeviceRepository : IDeviceRepository
         return baseDevice;
     }
 
-
-    public async Task<string> CreateDevice(string jsonData)
-    {
-        var json = JsonNode.Parse(jsonData);
-        var deviceType = json["deviceType"]?.ToString().ToUpper();
-        if (string.IsNullOrEmpty(deviceType))
-        {
-            throw new ArgumentException("Device type is required.");
-        }
-        var newId = $"{deviceType}-{Guid.NewGuid():N}";
-
-        using var connection = new SqlConnection(_connectionString);
-        await connection.OpenAsync();
-        
-        // TRANSACTION
-        SqlTransaction transaction = connection.BeginTransaction();
-        
-        var insertDevice = @"INSERT INTO Device (Id, Name, IsEnabled) 
-                          VALUES (@Id, @Name, @IsEnabled)";
-        
-        using var deviceCommand = new SqlCommand(insertDevice, connection, transaction);
-
-        
-        // EXECUTE PROCEDURE
-        // deviceCommand.CommandType = CommandType.StoredProcedure;
-        deviceCommand.Parameters.AddWithValue("@Id", newId);
-        deviceCommand.Parameters.AddWithValue("@Name", json["name"]?.ToString());
-        deviceCommand.Parameters.AddWithValue("@IsEnabled", json["isEnabled"].GetValue<bool>());
-        await deviceCommand.ExecuteNonQueryAsync();
-
-        switch (deviceType)
-        {
-            case "ED":
-            {
-                var edQuery = @"INSERT INTO Embedded (lpAddress, NetworkName, DeviceId) 
-                             VALUES (@DeviceId, @Network, @Id)";
-                using var edCommand = new SqlCommand(edQuery, connection, transaction);
-                
-                //EXECUTE PROCEDURE
-                // edCommand.CommandType = CommandType.StoredProcedure;
-                edCommand.Parameters.AddWithValue("@DeviceId", newId);
-                edCommand.Parameters.AddWithValue("@Ip", json["ipAddress"]?.ToString());
-                edCommand.Parameters.AddWithValue("@Network", json["networkName"]?.ToString());
-                await edCommand.ExecuteNonQueryAsync();
-                break;
-            }
-
-            case "PC":
-            {
-                var pcQuery = @"INSERT INTO PersonalComputer (DeviceId, OperationSystem) 
-                              VALUES (@DeviceId, @OS)";
-                using var pcCommand = new SqlCommand(pcQuery, connection, transaction);
-                
-                //EXECUTE PROCEDURE
-                // pcCommand.CommandType = CommandType.StoredProcedure;
-                pcCommand.Parameters.AddWithValue("@DeviceId", newId);
-                pcCommand.Parameters.AddWithValue("@OS", json["operationSystem"]?.ToString());
-                await pcCommand.ExecuteNonQueryAsync();
-                break;
-            }
-
-            case "SW":
-            {
-                var swQuery = @"INSERT INTO Smartwatch (BatteryPercentage, DeviceId) 
-                              VALUES (@Battery, @DeviceId)";
-                using var swCommand = new SqlCommand(swQuery, connection, transaction);
-                
-                //EXECUTE PROCEDURE
-                // swCommand.CommandType = CommandType.StoredProcedure;
-                swCommand.Parameters.AddWithValue("@DeviceId", newId);
-                swCommand.Parameters.AddWithValue("@Battery", Convert.ToInt32(json["batteryPercentage"]));
-                await swCommand.ExecuteNonQueryAsync();
-                break;
-            }
-
-            default:
-                transaction.Rollback();
-                throw new ArgumentException("WRONG DEVICE TYPE");
-        }
-        transaction.Commit();
-        return newId;
-    }
-
     
 
+    public async Task<string> CreateEmbeddedDevice(EmbeddedDevices ed)
+    {
+        using var connection = new SqlConnection(_connectionString);
+        using var command = new SqlCommand("AddEmbedded", connection);
+        command.CommandType = CommandType.StoredProcedure;
+
+        command.Parameters.AddWithValue("@DeviceId", ed.Id);
+        command.Parameters.AddWithValue("@Name", ed.Name);
+        command.Parameters.AddWithValue("@IsEnabled", ed.IsDeviceTurned);
+        command.Parameters.AddWithValue("@IpAddress", ed.IpAddress);
+        command.Parameters.AddWithValue("@NetworkName", ed.NetworkName);
+
+        await connection.OpenAsync();
+        await command.ExecuteNonQueryAsync();
+        return ed.Id;
+    }
+
+    public async Task<string> CreateSmartwatchDevice(SmartWatches sw)
+    {
+        using var connection = new SqlConnection(_connectionString);
+        using var command = new SqlCommand("AddSmartwatch", connection);
+        command.CommandType = CommandType.StoredProcedure;
+
+        command.Parameters.AddWithValue("@DeviceId", sw.Id);
+        command.Parameters.AddWithValue("@Name", sw.Name);
+        command.Parameters.AddWithValue("@IsEnabled", sw.IsDeviceTurned);
+        command.Parameters.AddWithValue("@BatteryPercentage", sw.batteryPercent);
+
+        await connection.OpenAsync();
+        await command.ExecuteNonQueryAsync();
+        return sw.Id;
+    }
+
+
+    public async Task<string> CreatePersonalComputerDevice(PersonalComputer pc)
+    {
+        using var connection = new SqlConnection(_connectionString);
+        using var command = new SqlCommand("AddPersonalComputer", connection);
+        command.CommandType = CommandType.StoredProcedure;
+
+        command.Parameters.AddWithValue("@DeviceId", pc.Id);
+        command.Parameters.AddWithValue("@Name", pc.Name);
+        command.Parameters.AddWithValue("@IsEnabled", pc.IsDeviceTurned);
+        command.Parameters.AddWithValue("@OperationSystem", pc.OperatingSystem);
+
+        await connection.OpenAsync();
+        await command.ExecuteNonQueryAsync();
+        return pc.Id;
+    }
+    
     public async Task<bool> UpdateDevice(string jsonData)
     {
         var json = JsonNode.Parse(jsonData);
@@ -240,7 +204,7 @@ public class DeviceRepository : IDeviceRepository
         deviceCommand.Parameters.AddWithValue("@DeviceId", deviceId);
         deviceCommand.Parameters.AddWithValue("@Name", json["name"]?.ToString());
         deviceCommand.Parameters.AddWithValue("@IsEnabled", json["isEnabled"].GetValue<bool>());
-        deviceCommand.Parameters.AddWithValue("@RowVersion", takeRowVerDevice(deviceId));
+        deviceCommand.Parameters.AddWithValue("@RowVersion", TakeRowVerDevice(deviceId));
         var  affectedRows = await deviceCommand.ExecuteNonQueryAsync();
         if (affectedRows == 0 )
         {
@@ -260,7 +224,7 @@ public class DeviceRepository : IDeviceRepository
                 edCommand.Parameters.AddWithValue("@DeviceId", deviceId);
                 edCommand.Parameters.AddWithValue("@Ip", json["IpAddress"]?.ToString());
                 edCommand.Parameters.AddWithValue("@Network", json["networkName"]?.ToString());
-                edCommand.Parameters.AddWithValue("@RowVersion", takeRowVerChild(deviceId));
+                edCommand.Parameters.AddWithValue("@RowVersion", TakeRowVerChild(deviceId));
                 var affectedRowsED = await edCommand.ExecuteNonQueryAsync();
                 if (affectedRowsED == 0)
                 {
@@ -278,7 +242,7 @@ public class DeviceRepository : IDeviceRepository
                 using var pcCommand = new SqlCommand(pcQuery, connection, transaction);
                 pcCommand.Parameters.AddWithValue("@DeviceId", deviceId);
                 pcCommand.Parameters.AddWithValue("@OS", json["operationSystem"]?.ToString());
-                pcCommand.Parameters.AddWithValue("@RowVersion", takeRowVerChild(deviceId));
+                pcCommand.Parameters.AddWithValue("@RowVersion", TakeRowVerChild(deviceId));
                 var affectedRowsPC = await pcCommand.ExecuteNonQueryAsync();
 
                 if (affectedRowsPC == 0)
@@ -297,7 +261,7 @@ public class DeviceRepository : IDeviceRepository
                 using var swCommand = new SqlCommand(swQuery, connection, transaction);
                 swCommand.Parameters.AddWithValue("@DeviceId", deviceId);
                 swCommand.Parameters.AddWithValue("@Battery", Convert.ToInt32(json["batteryPercentage"]));
-                swCommand.Parameters.AddWithValue("@RowVersion", takeRowVerChild(deviceId));
+                swCommand.Parameters.AddWithValue("@RowVersion", TakeRowVerChild(deviceId));
                 var affectedRowsSW = await swCommand.ExecuteNonQueryAsync();
 
                 if (affectedRowsSW == 0)
@@ -331,7 +295,7 @@ public class DeviceRepository : IDeviceRepository
         return true;
     }
 
-    public byte[] takeRowVerDevice(string id)
+    public byte[] TakeRowVerDevice(string id)
     {
         using var connection = new SqlConnection(_connectionString);
         connection.Open();
@@ -347,7 +311,7 @@ public class DeviceRepository : IDeviceRepository
         
     }
     
-    public byte[] takeRowVerChild(string id)
+    public byte[] TakeRowVerChild(string id)
     {
         using var connection = new SqlConnection(_connectionString);
         connection.Open();
@@ -356,15 +320,6 @@ public class DeviceRepository : IDeviceRepository
         
         var split = id.Split('-')[0].ToUpper();
         
-        // var mainQuery = "SELECT RowVer FROM Device WHERE Id = @Id";
-        // using var mainCommand = new SqlCommand(mainQuery, connection);
-        // mainCommand.Parameters.AddWithValue("@Id", id);
-        // using var mainReader = mainCommand.ExecuteReader();
-        // mainReader.Read();
-        // result = mainReader.GetValue(0) as byte[];
-        // Console.WriteLine(result);
-        // mainReader.Close();
-
         switch (split)
         {
             case "ED":
